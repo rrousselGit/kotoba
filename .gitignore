@@ -1,0 +1,3 @@
+# Local package downloads and extraction staging; vendored runtime files live in vendor/.
+/*.tgz
+/package/

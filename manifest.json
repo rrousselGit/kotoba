@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Kotoba — Natural Japanese Vocabulary",
+  "version": "1.2.0",
+  "description": "Notice Japanese vocabulary naturally, learn new words with furigana, and keep a private encounter history.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://jisho.org/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Kotoba vocabulary", "default_popup": "popup.html" },
+  "options_page": "options.html",
+  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["dictionary.js", "vendor/kuromoji.js", "content.js"], "css": ["styles.css"], "run_at": "document_idle" }],
+  "web_accessible_resources": [{ "resources": ["vendor/dict/*.dat.gz"], "matches": ["<all_urls>"] }]
+}
