@@ -13,6 +13,8 @@ Kotoba is a local-first Chrome extension for learning Japanese vocabulary as you
 3. Click **Load unpacked** and select the repository folder.
 4. Refresh any pages that were already open.
 
+For Firefox for Android, use the separate [Firefox port](firefox-android/README.md). Firefox requires extensions to be signed before they can be installed on Android.
+
 ## Features
 
 - **Japanese word analysis:** Kuromoji and its IPA dictionary run locally in the browser. Adjacent analyzer tokens are merged when they form a word in Kotoba's bundled vocabulary.
