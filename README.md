@@ -21,20 +21,26 @@ For Firefox for Android, use the separate [Firefox port](firefox-android/README.
 - **New-word cues:** New words are highlighted. Furigana is shown for kanji words when the analyzer supplies a reading. Cues remain on the current page after recording, and later page visits omit default furigana for words already seen.
 - **Encounter history:** A word is recorded when it enters the visible viewport. Scrolling on the same page does not increase its encounter count; another page visit does. Kotoba stores first-seen and last-seen dates.
 - **Word details:** Click a word to see its meaning and encounter history. Holding the pointer over it for three seconds opens the same panel and turns on furigana when available.
+- **Text in images (optional):** Turn on **Read text in images** in the toolbar popup. Images are scanned as they scroll into view, and recognized words get the same highlights, furigana, click panel, and encounter tracking as page text. Pick the recognition engine in the same popup:
+  - **PaddleOCR** (default): PP-OCRv5 text detection and recognition, bundled. Handles horizontal and vertical text and busy backgrounds. Fast.
+  - **manga-ocr**: a model trained on manga lettering. Most accurate on speech bubbles. Its ~117 MB model is downloaded from Hugging Face on first use, then cached for offline use. Slow on phones.
+  - **Tesseract**: lightweight and bundled, in horizontal, vertical, and auto (tries both) modes. Best on clean printed text.
+
+  OCR runs on your device in background workers (hosted by an offscreen document), so it never blocks the browser or the page.
 - **Vocabulary list:** Open the extension popup and choose **Vocabulary** to search your history, view encounter dates, export it as JSON, or clear it.
 
 ## Privacy and permissions
 
-Kotoba needs access to page text so it can find Japanese words. Word analysis and furigana generation run locally using the files in `vendor/`. Encounter history and cached lookups are stored in Chrome's local extension storage and are not synced by Kotoba.
+Kotoba needs access to page text so it can find Japanese words. Word analysis, furigana generation, and image text recognition run locally using the files in `vendor/`. When image recognition is on, the extension downloads each image itself from the address the page uses so it can read the pixels; images are not sent anywhere else. Choosing the manga-ocr engine downloads its model files from Hugging Face once; no page content is sent with that request. Encounter history and cached lookups are stored in Chrome's local extension storage and are not synced by Kotoba.
 
 When a clicked word has no English meaning in the bundled starter vocabulary, Kotoba sends that word to Jisho to request a definition. It does not send the page URL or surrounding page text. See the [Jisho API](https://jisho.org/api/v1/search/words?keyword=猫).
 
-The extension requests Chrome's `storage` permission, access to pages where its content script runs (`<all_urls>`), and host access to `jisho.org` for those definition lookups.
+The extension requests Chrome's `storage` permission, access to pages where its content script runs (`<all_urls>`), host access to `jisho.org` for those definition lookups, host access to all sites so it can read page images for OCR, and the `offscreen` permission to run the OCR engine.
 
 ## Known limitations
 
-Kuromoji provides broad Japanese coverage, but readings may be missing or incorrect for names, rare terms, and context-dependent words. Japanese word boundaries can also be ambiguous. The bundled English vocabulary is small; uncatalogued meanings require a click-time Jisho lookup.
+Kuromoji provides broad Japanese coverage, but readings may be missing or incorrect for names, rare terms, and context-dependent words. Japanese word boundaries can also be ambiguous. Image recognition quality depends on the engine and the image: heavily stylized lettering, handwriting, and text on photos are often missed or misread. Only `<img>` elements are scanned (not CSS backgrounds or `<canvas>`), and images rendered with `object-fit` cropping may have misaligned overlays. The bundled English vocabulary is small; uncatalogued meanings require a click-time Jisho lookup.
 
 ## License
 
-Kotoba's original code is licensed under the MIT License; see [LICENSE](LICENSE). The bundled Kuromoji analyzer and IPA dictionary retain their separate Apache 2.0 and dictionary notices in [`vendor/`](vendor/).
+Kotoba's original code is licensed under the MIT License; see [LICENSE](LICENSE). The bundled Kuromoji analyzer, IPA dictionary, OCR engines (Tesseract, ONNX Runtime) and models (Tesseract, PaddleOCR, manga-ocr vocabulary) retain their separate Apache 2.0, MIT and dictionary notices in [`vendor/`](vendor/).

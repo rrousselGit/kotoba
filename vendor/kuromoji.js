@@ -8114,6 +8114,8 @@ BrowserDictionaryLoader.prototype = Object.create(DictionaryLoader.prototype);
  * @param {BrowserDictionaryLoader~onLoad} callback Callback function
  */
 BrowserDictionaryLoader.prototype.loadArrayBuffer = function (url, callback) {
+    // Kotoba patch: path.join collapses "moz-extension://" to "moz-extension:/", which Firefox rejects.
+    url = url.replace(/^([a-z][a-z0-9+.-]*):\/(?!\/)/i, "$1://");
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.responseType = "arraybuffer";
